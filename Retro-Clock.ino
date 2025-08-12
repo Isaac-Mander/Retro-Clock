@@ -1,6 +1,11 @@
 #include <Arduino.h>
 #include "matrix.h"
 #include "clock_face.h"
+#include "GPSModule.h"
+
+//Create a gps object
+TinyGPS gps;
+
 
 const size_t MATRIX_COLS = 5;
 const size_t MATRIX_ROWS = 5;
@@ -57,11 +62,9 @@ ClockFace clockFace(HOUR_LUT, MINUTE_LUT, AM_PM_LED, MINUTE_LEDS, &ledMatrix);
 void setup() {
   // Serial.begin(115200); // Using serial will activate some random LEDs on the matrix
   clockFace.init();
-
 }
 
 void loop() {
   // Display time 11:10 AM
   clockFace.lightTime(11, 10, false);
-
 }
