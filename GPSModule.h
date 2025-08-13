@@ -44,10 +44,9 @@ private:
   long _baud;
 };
 
-uint8_t hexCharToVal(char c);
 uint8_t calculateNMEAChecksum(const char* sentence);
+uint8_t hexCharToVal(char c);
 uint8_t getSentenceChecksum(const char* sentence);
-void printGPSData(TinyGPS gps);
-
-
+void feedNMEA(const char* sentence, TinyGPS &gps);
+void printGPSData(TinyGPS &gps);
 #endif

@@ -68,7 +68,7 @@ GPSData GPSModule::getGPSData() {
   return result;
 }
 
-//Convert a hex number to a char number
+// Convert a hex number to a char number
 uint8_t hexCharToVal(char c) {
   if (c >= '0' && c <= '9') return c - '0';
   if (c >= 'A' && c <= 'F') return c - 'A' + 10;
@@ -76,7 +76,7 @@ uint8_t hexCharToVal(char c) {
   return 0;
 }
 
-//Calculate the current NEMA checksum from the string
+// Calculate the current NMEA checksum from the string
 uint8_t calculateNMEAChecksum(const char* sentence) {
   uint8_t checksum = 0;
   for (const char* p = sentence + 1; *p != '*' && *p != '\0'; ++p) {
@@ -85,30 +85,41 @@ uint8_t calculateNMEAChecksum(const char* sentence) {
   return checksum;
 }
 
-//Copy the expected checksum from the inputted string
+// Copy the expected checksum from the inputted string
 uint8_t getSentenceChecksum(const char* sentence) {
   size_t len = strlen(sentence);
   if (len < 3) return 0;
   return (hexCharToVal(sentence[len - 4]) << 4) + hexCharToVal(sentence[len - 3]);
 }
 
-//Print the gps data in a human readable way
-void printGPSData(TinyGPS gps) {
-  //Get positional info
+// Print the gps data in a human readable way
+void printGPSData(TinyGPS &gps) {
+  // Get positional info
   float lat, lon;
   unsigned long age;
   gps.f_get_position(&lat, &lon, &age);
 
-  //Print pos info
+  // Print pos info
   Serial.print("LAT=");
   Serial.print(lat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : lat, 6);
   Serial.print(" LON=");
   Serial.print(lon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : lon, 6);
 
-  //Show if the data is valid or not
+  // Show if the data is valid or not
   unsigned long chars;
   unsigned short sentences, failed;
   gps.stats(&chars, &sentences, &failed);
   Serial.print(" CSUM ERR=");
   Serial.println(failed);
 }
+
+// Send a NMEA char to be decoded
+void feedNMEA(const char* sentence, TinyGPS &gps) {
+  Serial.print("Feeding NMEA: ");
+  Serial.print(sentence);
+  for (const char* p = sentence; *p != '\0'; ++p) {
+    gps.encode(*p);
+    delay(5);  // Simulate serial timing
+  }
+}
+
